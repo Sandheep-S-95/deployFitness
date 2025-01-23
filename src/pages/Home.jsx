@@ -46,7 +46,7 @@ const Home = () => {
                                 </motion.div>
                             ))
                         ) : (
-                            <div className="text-center bg-gray-50 p-6 rounded-lg border border-gray-200 flex flex-col items-center justify-center space-y-4">
+                            <div className="text-center bg-dark-50 p-6 rounded-lg border border-gray-200 flex flex-col items-center justify-center space-y-4">
                               <PlusCircle className="text-gray-400 w-12 h-12 mb-2" />
                               <div className="text-gray-500 text-lg font-semibold">
                                 Kindly Add Workouts for Today's Session
