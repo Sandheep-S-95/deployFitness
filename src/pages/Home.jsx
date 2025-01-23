@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { motion } from "framer-motion";
 import { useTaskContext } from "../hooks/useTasksContext.jsx";
+import { PlusCircle } from 'lucide-react';
 //components
 import TaskDetails from "../components/TaskDetails";
 import TaskForm from "../components/TaskForm";
