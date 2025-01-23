@@ -45,7 +45,7 @@ const Home = () => {
                                 </motion.div>
                             ))
                         ) : (
-                            <div className="text-center text-grey text-lg font-semibold mt-10">
+                            <div className="text-center text-gray text-lg font-semibold mt-10">
                                 Kindly add Workouts for Today's Session
                             </div>
                         )}
