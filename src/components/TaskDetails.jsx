@@ -1,65 +1,43 @@
-// TaskDetails.jsx
-import { Trash2, Edit } from 'lucide-react';
-import { useState } from 'react';
-import { useTaskContext } from '../hooks/useTasksContext';
+import { useState } from "react";
+import { useTaskContext } from "../hooks/useTasksContext";
+import { Trash2, Edit } from "lucide-react";
 
 const TaskDetails = ({ task }) => {
     const { dispatch } = useTaskContext();
     const [isEditing, setIsEditing] = useState(false);
-    const [editForm, setEditForm] = useState({
+    const [updatedTask, setUpdatedTask] = useState({
         title: task.title,
         load: task.load,
-        reps: task.reps
+        reps: task.reps,
     });
 
-    const handleDelete = async () => {
-        const response = await fetch('/api/tasks/' + task._id, {
-            method: 'DELETE'
-        });
-        const json = await response.json();
-
-        if (response.ok) {
-            dispatch({ type: 'DELETE_TASK', payload: json });
-        }
+    const handleDelete = () => {
+        const storedTasks = JSON.parse(localStorage.getItem("tasks")) || [];
+        const filteredTasks = storedTasks.filter((t) => t._id !== task._id);
+        localStorage.setItem("tasks", JSON.stringify(filteredTasks));
+        dispatch({ type: "DELETE_TASK", payload: task });
     };
 
-    const handleUpdate = async (e) => {
-        e.preventDefault();
-    
-        const response = await fetch('/api/tasks/' + task._id, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(editForm)
-        });
-
-        const updatedTask = await response.json(); // Get the updated task from the response
-
-        console.log("++++++++++++",updatedTask);
-
-        if (response.ok) {
-            // Dispatch the updated task directly
-            dispatch({ 
-                type: 'UPDATE_TASK', 
-                payload: updatedTask  // Pass the updated task directly
-            });
-            setIsEditing(false);  // Close the edit form
-        } else {
-            console.error("Failed to update task:", updatedTask);
-        }
+    const handleUpdate = () => {
+        const storedTasks = JSON.parse(localStorage.getItem("tasks")) || [];
+        const updatedTasks = storedTasks.map((t) =>
+            t._id === task._id ? { ...task, ...updatedTask } : t
+        );
+        localStorage.setItem("tasks", JSON.stringify(updatedTasks));
+        dispatch({ type: "UPDATE_TASK", payload: { ...task, ...updatedTask } });
+        setIsEditing(false);
     };
 
     if (isEditing) {
         return (
             <div className="bg-black border border-blue-500 rounded-lg p-6 mb-6 shadow-lg shadow-blue-500/20 w-[320px] ml-0">
-                <form onSubmit={handleUpdate} className="space-y-4">
+                <form onSubmit={(e) => { e.preventDefault(); handleUpdate(); }} className="space-y-4">
                     <div>
                         <label className="text-blue-400 text-sm font-semibold">Title:</label>
                         <input
                             type="text"
-                            value={editForm.title}
-                            onChange={(e) => setEditForm({...editForm, title: e.target.value})}
+                            value={updatedTask.title}
+                            onChange={(e) => setUpdatedTask({...updatedTask, title: e.target.value})}
                             className="w-full mt-1 bg-blue-500/20 border border-blue-500/30 rounded-md p-2 text-white"
                         />
                     </div>
@@ -67,8 +45,8 @@ const TaskDetails = ({ task }) => {
                         <label className="text-blue-400 text-sm font-semibold">Load (kg):</label>
                         <input
                             type="number"
-                            value={editForm.load}
-                            onChange={(e) => setEditForm({...editForm, load: e.target.value})}
+                            value={updatedTask.load}
+                            onChange={(e) => setUpdatedTask({...updatedTask, load: e.target.value})}
                             className="w-full mt-1 bg-blue-500/20 border border-blue-500/30 rounded-md p-2 text-white"
                         />
                     </div>
@@ -76,8 +54,8 @@ const TaskDetails = ({ task }) => {
                         <label className="text-blue-400 text-sm font-semibold">Reps:</label>
                         <input
                             type="number"
-                            value={editForm.reps}
-                            onChange={(e) => setEditForm({...editForm, reps: e.target.value})}
+                            value={updatedTask.reps}
+                            onChange={(e) => setUpdatedTask({...updatedTask, reps: e.target.value})}
                             className="w-full mt-1 bg-blue-500/20 border border-blue-500/30 rounded-md p-2 text-white"
                         />
                     </div>

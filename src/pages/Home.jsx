@@ -1,24 +1,25 @@
-// Home.jsx
-import { useEffect } from "react"
-import { motion } from "framer-motion"
-import {useTaskContext} from "../hooks/useTasksContext.jsx"
+import { useEffect } from "react";
+import { motion } from "framer-motion";
+import { useTaskContext } from "../hooks/useTasksContext.jsx";
 //components
 import TaskDetails from "../components/TaskDetails";
 import TaskForm from "../components/TaskForm";
 import Footer from "../components/Footer.jsx";
 
-const Home = ()=>{
-    const {tasks,dispatch}=useTaskContext()
+const Home = () => {
+    const { tasks, dispatch } = useTaskContext();
+
     useEffect(() => {
-        const fetchTasks = async () => {
-            // Instead of calling the API, directly dispatch an empty array
-            const emptyArray = [];
-            dispatch({ type: 'SET_TASKS', payload: emptyArray });
+        const fetchTasks = () => {
+            // Read tasks from local storage
+            const storedTasks = JSON.parse(localStorage.getItem("tasks")) || [];
+            dispatch({ type: "SET_TASKS", payload: storedTasks });
         };
-    
+
         fetchTasks();
     }, []);
-    return(
+
+    return (
         <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -28,19 +29,25 @@ const Home = ()=>{
             <div className="container mx-auto px-4 lg:flex lg:space-x-6">
                 {/* Tasks Column */}
                 <div className="lg:w-2/3 space-y-4 pt-6">
-                    {tasks && tasks.map((task, index) => (
-                        <motion.div
-                            key={task._id}
-                            initial={{ opacity: 0, x: -50 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ 
-                                duration: 0.5, 
-                                delay: index * 0.1 
-                            }}
-                        >
-                            <TaskDetails task={task}/>
-                        </motion.div>
-                    ))}
+                    {tasks && tasks.length > 0 ? (
+                        tasks.map((task, index) => (
+                            <motion.div
+                                key={task._id}
+                                initial={{ opacity: 0, x: -50 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ 
+                                    duration: 0.5, 
+                                    delay: index * 0.1 
+                                }}
+                            >
+                                <TaskDetails task={task} />
+                            </motion.div>
+                        ))
+                    ) : (
+                        <div className="text-center text-white text-lg font-semibold mt-10">
+                            Workouts for Today's Session
+                        </div>
+                    )}
                 </div>
                 
                 {/* Task Form Column */}
@@ -50,14 +57,14 @@ const Home = ()=>{
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.6, delay: 0.4 }}
                     >
-                        <TaskForm/>
+                        <TaskForm />
                     </motion.div>
                 </div>
             </div>
             
             <Footer />
         </motion.div>
-    )
-}
+    );
+};
 
-export default Home
+export default Home;

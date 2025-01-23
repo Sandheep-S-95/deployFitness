@@ -9,27 +9,18 @@ const TaskForm = () => {
     const [reps, setReps] = useState('');
     const [error, setError] = useState(null);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-
-        // Validate inputs
-        if (!title || !load || !reps) {
-            setError("All fields are required.");
-            return;
-        }
-
-        // Create a new task object
-        const task = { 
-            _id: Date.now().toString(), // Generate a unique ID for the task
-            title, 
-            load, 
-            reps 
-        };
-
-        // Dispatch the action to add the task
+        const task = { title, load, reps, _id: Date.now().toString() }; // Add unique ID
+        const storedTasks = JSON.parse(localStorage.getItem("tasks")) || [];
+        const updatedTasks = [task, ...storedTasks];
+    
+        // Save updated tasks to local storage
+        localStorage.setItem("tasks", JSON.stringify(updatedTasks));
+    
+        // Update context
         dispatch({ type: "CREATE_TASK", payload: task });
-
-        // Reset the form fields and error state
+    
         setTitle('');
         setLoad('');
         setReps('');
